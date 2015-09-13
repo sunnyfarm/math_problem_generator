@@ -1,0 +1,454 @@
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+	  <meta name="format-detection" content="telephone=no" />
+		<meta name="description" content="Generates simple worksheets of arithmetic problems." />
+		<meta name="keywords" content="math,maths,arithmetic,worksheet,generator,tool,teachers" />
+		<meta name="author" content="David Millar (dave@davegoesthedistance.com)" />
+		<title>Math Worksheet Generator</title>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+		<script type="text/javascript">
+			// This part grabs GET variables from the URL to use for settings, and pops them into $_GET[] so it's like PHP
+			var $_GET = [],
+          parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) { $_GET[key] = value; }),
+          talltales = [],
+          namecalling,
+          junkbox,
+          randInt,
+          problemRand,
+          coinFlip;
+
+			// talltales is a nested array for story problems, with variables thrown in surrounded by &---&
+			// each subarray is for a different operator
+			talltales['plus'] = [
+				"&char&'s garden has cherry tomatoes. One plant has &numa& and the other has &numb&. How many tomatoes is that altogether?", //DM
+				"Last weekend, &char& heard birds outside. There were &numa& chirps Saturday and &numb& Sunday. How many chirps did &char& hear total?", //DM
+				"&char& loves taking pictures of insects: &numa& of a praying mantis, &numb& of a dragonfly, and &numc& of a beetle. How many pictures is that total?", //BL
+				"&char& has &numa& cousins on father side, and &numb& on mother side. How many cousins does &char& have in total?", //MY
+				"A container has &numa& apples and &numb& of oranges. How many total fruits are in the container?", //MY
+				"There are &numa& cows and &numb& dogs on a large farm. How many animals are on the farm?", //MY
+				"&char& has &numa& toys, &char&'s sister has &numb& more than &char&. How many toys does &char&'s sister have? How many toys does &char&'s sister and &char& have in total?",
+				"After eating &numa& pieces of candy, &char& had &numa& pieces left. How many pieces of candy did &char& have in the begining?",
+				"There are as many girls as boys in the library. If there are &numa& boys, how many children are there alltogether?",
+				"There are &numa& boy students and &numb& girl students on the playground. How many students are on the playground?", //MY
+				"&char& sold &numa& cookies on Monday, &numb& cookies on Tuesday. How many cookies did &char& sell in total?",
+				"There are &numa& visitors to the museum this Saturday, &numb& visistors this Sunday. How many visitors in total this weekend?",
+				"A homemade pizza needs to have &numa& black olives and &numb& green olives. How many olives does it require altogether?" //DM
+				];
+			talltales['minus'] = [
+				"&char& has &numtot& crayons. A friend asked to borrow &numa& crayons. How many crayons does &char& have left?", //DM
+				"With &numtot& minutes left until bedtime, &char& spent &numa& minutes drawing a &obj&. How many minutes left until bedtime?", //DM
+				"&char& planted &numtotc& eggplant seeds, but &numa& never sprouted and &numb& of those eggplants died during a big frost. How many still grew?", //BL
+				"&char& has a bag with &numtotc& popsicles. If &char& eats &numa& popsicles, how many will be left? What if &char& eats &numb& more?", //DM
+				"&char& wants to buy a book using some of the &numtotc& dollars, but &char& wants to keep &numa& dollars. How many dollars can &char& spend on the book?", //MY
+				"It took me &numtot& minutes to walk to school. If I walks &numa& minutes faster, how long will it take to get to school?", //MY
+				"It took me &numa& minutes to walk to school yesterday. Today I walked &numtot& minutes. How many minutes faster did I walk today than yesterday?", //MY
+				"It rained &numa& inches last year. It also rained &numb& this year. Which year did it rain more? By how much?",
+				"&char& made &numtotc& cookies for the bakery sale. &char&'s sister made &numa& raisen cookies. Together they sold &numb& cookies. How many were left?", //MY
+				"&char& has &numtot& toys, &char&'s brother has &numa& fewer toys than &char&. How many toys does &char&'s brother have?",
+				"&char& has &numtot& books, &char&'s cousin has &numa& books. How many more books does &char& have than &char&'s cousin?",				
+				"&char& has &numa& fewer pencils than &char&'s classmate. If &char&'s classmate has &numtot& pencils, how many pencils does &char& have?",
+				"&char& studied &numtot& words last night. This morning &char& forgot &numa& words. How many words does &char& remember today?",
+				"There are &numtot& books in the room. &numa& of them are fiction books, the rest are non-fiction. How many non-fiction books are there?",
+				"A pencil costs &numtot& cents. A eraser costs &numa& cents. How much cheaper is the eraser?",
+				"A fabric shop has &numtot& inches of ribbon. &numb& inches are cut off and sold. How many yards are left?" //DM
+				];
+			talltales['times'] = [
+				"&char& wants to bake &numa& cookies. Each cookie needs &numb& chocolate chips. How many chips total are needed?", //DM
+				"A box of pokemon cards contains &numa& packs, each pack contains &numb& cards. How many cards does 1 whole box contain?", //DM
+				"You have &numa& rabbits that eat 5 carrots each and &numb& baby rabbits that eat 3 carrot each. How many carrots will they eat total?", //DM
+				"A pizza has 8 slices, and every slice has &numa& olives on it. How many olives does the pizza have total?", //DM
+				"&char& has &numa& containers. If you put &numb& necklaces in each container, how many total will &char& have?",
+				"&char& learns &numa& new words for &numb& days. How many words has &char& learned?",
+				"&char& and &numa& friends each eats &numb& pieces of potato chips. How many potato chips do they eat in total?",
+				"Each student in the class has &numa& books. There are &numb& students in the class. How many books do the students in the class have in total?",
+				"To cook rice, you must have 2 cups of water for every cup of rice. How much water is needed for &numa& cups of rice?" //DM
+				];
+			talltales['div'] = [
+				"&char& wants to put &numprod& perler beads in &numa& buckets, so each bucket has the same number of beads. How many beads in each bucket?", //MY
+				"&char& has &numprod& chocolate chips. To make &numa& cookies with even chocolate, how many chips should each cookie have?", //DM
+				"&char& has &numprod& pokemon cards. &char& wants to give the same number of cards to each of the &numa& students. How many each student can have?", //MY
+				"If &numb& bees can make &numprod& ounces of honey, how much honey can a single bee make?", //DM
+				"&char& has &numprod& pencils, one out of &numa& are purple. How many are purple?",
+				"&char& shares &numprod& blueberries equally with &numa& friends. How many blueberries does each friend get?",
+				"&char& baked &numprod& cookies and put &numa& cookies on each plate. How many plates does &char& need?",
+				"&char& gave &numprod& markers to some students. Each student received &numa& markers. How many students did &char& give markers to?",
+				"A museum of &obj& paintings has opened. It has &numprod& paintings and &numa& rooms to display them in. How many paintings go in each room?" //DM
+				];
+			// namecalling is an array of names for the story problems
+			namecalling = [
+        'Amy',
+		'Alyssa',
+		'Aaron',
+        'Brianna',
+		'Brendon',
+        'Chris',
+        'Danny',
+        'David',
+        'Emma',
+		'Emily',
+        'Julie',
+		'Jeremy',
+		'Jean',
+        'Katie',
+		'Karen',
+        'Laura',
+        'Nancy',
+        'Sherry',
+		'Thomas',
+		'Zoe'
+      ];
+			// junkbox is an array of random objects to insert in stories
+			junkbox = [
+        'monster',
+        'pirate ship',
+        'race car',
+        'robot',
+        'spaceship',
+        'unicorn'
+      ];
+
+			/**
+			 * Random Integer (randInt)
+			 * Returns a random number in a range given
+			 *
+			 * @param min integer
+			 * @param max integer
+			 * @return integer
+			 */
+		  randInt = function (min,max){
+        return min + (Math.floor(Math.random() * (max-min+1)));
+      };
+
+			/**
+			 * Problem Random Number (problemRand)
+			 * Returns a random number in the range allowed by the current settings
+			 *
+			 * @return integer
+			 */
+			problemRand = function(){
+        return randInt(minnum,maxnum);
+      };
+
+			/**
+			 * Coin Flip (coinFlip)
+			 * Returns true or false randomly
+			 *
+			 * @return boolean
+			 */
+			coinFlip = function(){
+        return (randInt(0,1) == 1);
+      };
+
+			/**
+			 * Section Roll (sectionRoll)
+			 * Creates a div tag as a jQuery object, populates it with content, and returns it
+			 *
+			 * @param type string (optional) which should be one of "basic, basic3, xvar, story"
+			 * @return jQuery object
+			 */
+			var sectionRoll = function (type){
+        var datcontent = "";
+
+				// selects a random problem type if none is supplied
+				type = type ? type : randInt(1,usabletypes.length)-1;
+				// creates our section div
+				$mystuff = $('<div/>', { text: 'Hey!' });
+				// switch depending on problem type chosen
+				$mystuff.addClass(usabletypes[type]);
+				switch (usabletypes[type]) {
+					// BASIC PROBLEMS (2 PIECE) -----------------------------------------
+					// Also used as default in case of user input error
+					default:
+					case 'basic': //basic arithmetic
+						for(kl=0;kl<5;kl++){
+							// generate operator and numbers
+							op = usablesigns[randInt(1,usablesigns.length)-1]; numa = problemRand(); numb = problemRand();
+							switch (op){
+								default:
+								case 'plus':	datcontent += numa + " + " + numb + " =<br/>"; break; // a + b = ?
+								case 'minus':	datcontent += Math.max(numa,numb) + " &minus; " + Math.min(numa,numb) + " =<br/>"; break; // b - a = ?
+								case 'times':	datcontent += numa + " &times; " + numb + " =<br/>"; break; // a x b = ?
+								case 'div':		datcontent += (numa * numb) + "	&divide; " + numb + " =<br/>"; break; // ab / b = ?
+							}
+						}
+						break;
+					case 'deciper': //decimals and percentages
+						for(kl=0;kl<5;kl++){
+							// generate numbers
+							mainper = randInt(1,9) * 10; mainper = (mainper < 10) ? "0" + mainper : mainper;
+							numa = problemRand() * 10;
+							switch (randInt(0,3)){
+								default:
+								case 0:	datcontent += "." + mainper + " as a percentage<br/>"; break; // a + b = ?
+								case 1:	datcontent += mainper + "% as a decimal<br/>"; break; // b - a = ?
+								case 2:	datcontent += "." + mainper + " &times; " + numa + " =<br/>"; break; // a x b = ?
+								case 3:	datcontent += mainper + "% of " + numa + " =<br/>"; break; // ab / b = ?
+							}
+						}
+						break;
+					case 'time': //time measurement
+						datcontent += "What time is&hellip;<br/>";
+						for(kl=0;kl<5;kl++){
+							// generate numbers
+							hour = randInt(1,12); minute = randInt(0,11) * 5; minute = (minute < 10) ? "0" + minute : minute;
+							if (coinFlip()) {	datcontent += (randInt(1,11) * 5) + " min.";	}
+								else { datcontent += (randInt(1,11)) + " hrs.";	}
+							datcontent += ((coinFlip()) ? " before " : " after ") + hour + ":" + minute + ((coinFlip()) ? "AM" : "PM") + " <br/>";
+						}
+						break;
+					case 'longdiv': //long division
+						datcontent += "<br/>";
+						// generate numbers
+						numa = problemRand(); numbmax = Math.floor(9999/numa); numbmin = Math.floor(1111/numa); numb = randInt(numbmin,numbmax) * numa;
+						datcontent += numa + "<span>" + numb + "</span> &nbsp; ";
+						// generate numbers
+						numa = problemRand(); numbmax = Math.floor(9999/numa); numbmin = Math.floor(1111/numa); numb = randInt(numbmin,numbmax) * numa;
+						datcontent += numa + "<span>" + numb + "</span>";
+						break;
+					case 'frac': //basic fractions
+						for(kl=0;kl<5;kl++){
+							// generate numbers
+							numa = problemRand(); numb = problemRand();
+							mytoggle = randInt(1,8);
+							if (mytoggle > 3){
+								op = usablesigns[randInt(1,usablesigns.length)-1];
+								denoms = [numa,numb,numa*numb,numa*2,numb*2,numa*3,numb*3]; denom = denoms[randInt(0,6)];
+								fbottom = "/<sub>"+denom+"</sub>"; fraca = "<sup>"+numa+"</sup>" + fbottom; fracb = "<sup>"+numb+"</sup>" + fbottom;
+								switch (op){
+									default:
+									case 'plus':	datcontent += fraca + " + " + fracb + " =<br/>"; break; // a + b = ?
+									case 'minus':
+										if (numb>numa) { datcontent += fracb + " &minus; " + fraca + " = <br/>"; } // b - x = ?
+											else { datcontent += fraca + " &minus; " + fracb + " = <br/>"; } // x - b = ?
+										break;
+									case 'times':	datcontent += fraca + " &times; " + fracb + " =<br/>"; break; // a x b = ?
+									case 'div':
+										if (coinFlip()) { datcontent += fraca + "	&divide; " + fracb + " =<br/>"; } // a / b = ?
+											else { datcontent += fracb + "	&divide; " + fraca + " =<br/>"; }  // b / a = ?
+										break;
+								}
+							} else /*if (mytoggle == 3)*/ {
+								datcontent += "Simplify <sup>"+numa+"</sup>/<sub>"+(numa*numb)+"</sub>" + "<br/>";
+							}/* else if (mytoggle == 2) {
+								numc = randInt(1,5);
+								datcontent += "<sup>"+((numa*numc)+numb)+"</sup>/<sub>"+numa+"</sub>" + " <span>to mixed<br/>number</span><br/>";
+							} else {
+								numc = randInt(1,5);
+								datcontent += numc + "<sup>"+randInt(1,numa-1)+"</sup>/<sub>"+numa+"</sub>" + " <span>to improper<br/>fraction</span><br/>";
+							}*/
+						}
+						break;
+					// BASIC PROBLEMS (3 PIECE) ------------------------------------------
+					case 'basic3': //basic arithmetic with 3 numbers
+						for(kl=0;kl<5;kl++){
+							// generate operator and numbers
+							op = usablesigns[randInt(1,usablesigns.length)-1]; numa = problemRand(); numb = problemRand(); numc = problemRand();
+							switch (op){
+								default:
+								case 'plus':	datcontent += numa + " + " + numb + " + " + numc + " =<br/>"; break; // a + b + c = ?
+								case 'minus':
+									datcontent += (numa + numb + numc) + "	&minus; "
+									if (coinFlip()) { datcontent += "(" + numa + "	+ " + numb + ") =<br/>"; } // d - a - b = ?
+										else { datcontent += numa + "	&minus; " + numb + " =<br/>"; } // d - (a + b) = ?
+									break;
+								case 'times':	datcontent += numa + " &times; " + numb + " &times; " + numc + " =<br/>"; break; // a x b x c = ?
+								case 'div':		datcontent += (numa * numb * numc) + "	&divide; " + numa + "	&divide; " + numb + " =<br/>"; break; // abc / a / b = ?
+							}
+						}
+						break;
+					// SOLVE FOR X OR Y -------------------------------------------------
+					case 'xvar': //arithmetic solve for x or y
+						for(kl=0;kl<5;kl++){
+							// generate operator and numbers
+							op = usablesigns[randInt(1,usablesigns.length)-1]; numa = problemRand(); numb = problemRand();
+							switch (op){
+								default:
+								case 'plus':
+									if (coinFlip()) { datcontent += numa + " + <em>y</em> = " + (numa+numb) + ". &nbsp; <em>y</em> = <br/>"; } // a + y = c
+										else { datcontent += "<em>x</em> + " + numb + " = " + (numa+numb) + ". &nbsp; <em>x</em> = <br/>"; } // x + b = c
+									break;
+								case 'minus':
+									if (coinFlip()) { datcontent += (numa+numb) + " &minus; <em>y</em> = " + numa + ". &nbsp; <em>y</em> = <br/>"; } // c - y = a
+										else { datcontent += "<em>x</em> &minus; " + numb + " = " + numa + ". &nbsp; <em>x</em> = <br/>"; } // x - b = a
+									break;
+								case 'times':
+									if (coinFlip()) { datcontent += numa + " &times; <em>y</em> = " + (numa*numb) + ". &nbsp; <em>y</em> = <br/>"; } // a x y = c
+										else { datcontent += "<em>x</em> &times; " + numb + " = " + (numa*numb) + ". &nbsp; <em>x</em> = <br/>"; } // x x b = c
+									break;
+								case 'div':
+									if (coinFlip()) { datcontent += (numa*numb) + " &divide; <em>y</em> = " + numa + ". &nbsp; <em>y</em> = <br/>"; } // ab / y = a
+										else { datcontent += "<em>x</em> &divide; " + numb + " = " + numa + ". &nbsp; <em>x</em> = <br/>"; } // x / b = a
+									break;
+							}
+						}
+						break;
+					// SOLVE WITH X OR Y -------------------------------------------------
+					case 'ifvar': //arithmetic solve with x or y known
+						numa = problemRand();
+						if (randInt(1,6) == 1){
+							numb = problemRand();
+							datcontent += "If <em>a</em> + <em>b</em> = " + (numa+numb) + ",<br/>and <em>a</em> &times; <em>b</em> = " + (numa*numb) + ",<br/>and";
+							if (numb>numa) { datcontent += " <em>b</em> is more than <em>a</em>,"; }
+								else if (numb<numa) { datcontent += " <em>a</em> is more than <em>b</em>,"; }
+								else { datcontent += " <em>a</em> = <em>b</em>,"; }
+							datcontent += "<br/>";
+							datcontent += "What's <em>a</em>? &nbsp; <em>a</em> =<br/>";
+							datcontent += "What's <em>b</em>? &nbsp; <em>b</em> =<br/>";
+						} else {
+							datcontent += "If <em>x</em> = " + numa + ", then&hellip;<br/>";
+							for(kl=0;kl<4;kl++){
+								// generate operator and numbers
+								op = usablesigns[randInt(1,usablesigns.length)-1]; numb = problemRand();
+								switch (op){
+									default:
+									case 'plus':
+										datcontent += "<em>x</em> + " + numb + " = <br/>"; // x + b = ???
+										break;
+									case 'minus':
+										if (numb>numa) { datcontent += numb + " &minus; <em>x</em> = <br/>"; } // b - x = ?
+											else if (numb<numa) { datcontent += "<em>x</em> &minus; " + numb + " = <br/>"; } // x - b = ?
+											else { datcontent += (numa+numb) + " &minus; <em>x</em> = <br/>"; } // c - x = ?
+										break;
+									case 'times':
+										datcontent += "<em>x</em> &times; " + numb + " = <br/>"; // x x b = ???
+										break;
+									case 'div':
+										datcontent += (numa*numb) + " &divide; <em>x</em> = <br/>"; // ab / x = ?
+										break;
+								}
+							}
+						}
+						break;
+					// STORY PROBLEMS --------------------------------------------------
+					case 'story': //arithmetic story problems
+						// change font size and line height to fit
+						// generate operator and numbers
+						op = usablesigns[randInt(1,usablesigns.length)-1]; numa = problemRand(); numb = problemRand(); numc = problemRand();
+						// additional variables for sum and product
+						numtot = numa + numb;	numprod = numa * numb; numtotc = numtot + numc; numprodc = numprod * numc;
+						// select a random character and object
+						schar = namecalling[randInt(1,namecalling.length)-1];
+						sobj = junkbox[randInt(1,junkbox.length)-1];
+						// grab a random story based on the operator chosen
+						if (!talltales[op]) { op = "plus"; }
+						basestory = talltales[op][randInt(1,talltales[op].length)-1];
+						// replace variables in the story string with actual data
+						datcontent = basestory.replace(/&char&/gi,schar).replace(/&numa&/gi,numa).replace(/&numb&/gi,numb).replace(/&numc&/gi,numc).replace(/&numtot&/gi,numtot).replace(/&numprod&/gi,numprod).replace(/&numtotc&/gi,numtotc).replace(/&numprodc&/gi,numprodc).replace(/&obj&/gi,sobj);
+						break;
+				}
+				// pop content into section div
+				$mystuff.html(datcontent);
+				// add section to the column container
+				return $mystuff;
+			};
+
+			$(document).ready(function() {
+				// set defaults if no variables supplied in query string
+				maxnum = ($_GET['mymax']) ? parseInt($_GET['mymax']) : 10; $("#mymax").val(maxnum);
+				minnum = ($_GET['mymin']) ? parseInt($_GET['mymin']) : 2; $("#mymin").val(minnum);
+				utypes = ($_GET['types'] && $_GET['types'] != "all") ? $_GET['types'] : "basic+basic3+xvar+ifvar+story+frac+time+longdiv+deciper";
+					usabletypes = utypes.split("+"); // array
+					if ($_GET['types'] && $_GET['types'] != "all") { $("#types").val(utypes.replace(/\+/g,' ')); } else { $("#types").val("all"); }
+				usigns = ($_GET['signs']) ? $_GET['signs'] : "plus+minus+times+div";
+					usablesigns = usigns.split("+"); // array
+					$("#signs").val(usigns.replace(/\+/g,' '));
+				// Select worksheet area and add sections
+				$currentcolumn = $('#main');
+				for(il=0;il<24;il++){ $currentcolumn.append(sectionRoll()); }
+				// Allow dbl-clicking a section to replace it with a new one
+				$("div").live('dblclick',function(){
+					$(this).replaceWith(sectionRoll());
+				});
+				// Allow dragging to customize
+				$("#main").sortable();
+				$("#main").disableSelection();
+				// On iOS use alerts for the help bits.
+				if (navigator.userAgent.match(/like Mac OS X/i)) {
+					$("#noprint span").click(function(){
+						alert($(this).attr('title'));
+					});
+        }
+				// Replace the SEO-friendly page title with this so that when printed, teachers may use it for students to write in their names
+				document.title = "Math Problems";
+			});
+		</script>
+		<style type="text/css">
+			body{font-size:11pt;line-height:18pt;background:#069;}
+			.coin{display:inline-block;width:25pt;height:16pt;margin:0 4.5pt;padding:0;text-align:center;border:1pt solid #999;-webkit-border-radius:9pt;-moz-border-radius:9pt;border-radius:9pt;}
+			#main{background:#fff;width:468pt;height:648pt;margin:4.5pt auto;cursor:default;overflow:hidden;letter-spacing:-0.25pt;}
+			div{float:left;margin:0;padding:9pt 18pt 9pt 9pt;border:1pt dashed #bbb;border-width:0 1pt 1pt 0;width:90pt;height:90pt;overflow:hidden;}
+				div:nth-child(4n+0){padding-right:9pt;border-right:0;}
+				div:nth-child(-n-4){border-bottom:0;}
+				div em{color:#444;}
+				div sup,div sub,div.frac span{font-size:8pt;}
+					div.frac span{display:inline-block;line-height:9pt;margin-left:3pt;vertical-align:middle;}
+					div sup{vertical-align:top;}
+					div sub{vertical-align:bottom;}
+				div.story,div.time,div.longdiv{font-size:8pt;line-height:15pt;}
+				div.longdiv span{margin-left:5px;padding:1px 5px;border:1px solid #444;border-width:1px 0 0 1px;letter-spacing:1pt;}
+
+			#noprint{background:#fff;width:432pt;margin:4.5pt auto;padding:9pt 18pt;}
+				#noprint a{color:#069;}
+				#noprint span{color:#069;border-bottom:1pt dashed;cursor:help;}
+				#subbtn,#resbtn{color:#fff;background:#069;font-weight:700;border:0;padding:2px 5px;cursor:pointer;-webkit-appearance:none;}
+				#mymin,#mymax,#types,#signs{color:#069;border:1px solid;padding:2px 5px;}
+				#mymin,#mymax{width:48pt;}
+				#types,#signs{width:276pt;float:right;}
+				hr{width:100%;height:0;border:0;border-top:1pt dashed #bbb;}
+
+			::-webkit-selection{background:#069;color:#fff;}
+			::-moz-selection{background:#069;color:#fff;}
+			::selection{background:#069;color:#fff;}
+
+			@media print{
+				body{background:#fff;}
+				#noprint{display:none;}
+			}
+			
+		</style>
+	</head>
+	<body>
+		<section id="main">
+		</section>
+		<section id="noprint">
+			<h1>Basic Math Worksheet Generator</h1>
+			<h2>How to Use</h2>
+			<p>Click and drag to rearrange. Double-click a section to regenerate using the current settings. Use the form below or change the query string to change the generation settings.</p>
+			<hr/>
+			<form method="get">
+				<!--br/>
+				<label for="chk1">Basic Arithmetic:</label><input type="checkbox" name="typing[]" id="chk1" value="basic" checked />
+				<label for="chk2">Basic Arithmetic (3 numbers):</label><input type="checkbox" name="typing[]" id="chk2" value="basic3" checked />
+				<label for="chk3">Solve for <em>x</em> or <em>y</em>:</label><input type="checkbox" name="typing[]" id="chk3" value="xvar" checked />
+				<label for="chk4">Story Problems:</label><input type="checkbox" name="typing[]" id="chk4" value="story" checked />
+				<br/-->
+				<label for="types">Problem Types:</label>
+				<input type="text" name="types" id="types" value="all" /> <span title="Use some combination of the types listed below separated by spaces, or 'all'. You can reuse a type more than once to make it more likely to appear.">What?</span><br/>
+
+				<label for="signs">Operators:</label>
+				<input type="text" name="signs" id="signs" value="plus minus times div" /> <span title="Use some combination of 'plus', minus', 'times', and 'div' separated by spaces. You can reuse a sign more than once to make it more likely to appear.">What?</span><br/>
+
+				<label for="mymin">Min:</label>
+				<input type="number" min="2" max="999" name="mymin" id="mymin" value="2" />
+				<label for="mymax">Max:</label>
+				<input type="number" min="3" max="1000" name="mymax" id="mymax" value="10" />
+				<input type="submit" id="subbtn" value="Regenerate!" />
+				<input type="reset" id="resbtn" value="Reset to Defaults!" />
+			</form>
+			<hr/>
+			Explanation of types:
+			<span title="Basic arithmetic with 2 numbers. (e.g. 1+2=3, 4&divide;2=2)">basic</span> &middot;
+			<span title="Basic arithmetic with 3 numbers. (e.g. 1+2+3=6, 4&divide;2&divide;2=1)">basic3</span> &middot;
+			<span title="Solve for x. (e.g. 3+x=7, so x=4)">xvar</span> &middot;
+			<span title="Solve with x known. (e.g. x=3, so 7&minus;x=4)">ifvar</span> &middot;
+			<span title="Fairly basic arithmetic framed in a randomized story problem.">story</span> &middot;
+			<span title="Basic fraction arithmetic. (e.g. 1/4 + 2/4 = 3/4)">frac</span> &middot;
+			<span title="Time addition/subtraction. (e.g. 40 minutes after 2:35 PM)">time</span> &middot;
+			<span title="Long division. (e.g. 2763 &divide; 9)">longdiv</span> &middot;
+			<span title="Decimals and percentages. (e.g. 10% of 60, 0.6 as a percentage)">deciper</span>
+			<hr/>
+		</section>
+	</body>
+</html>

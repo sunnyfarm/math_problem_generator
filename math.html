@@ -18,15 +18,19 @@
           randInt,
           problemRand,
           coinFlip;
-
+            // "&char&  &numtot& &numa&",
 			// talltales is a nested array for story problems, with variables thrown in surrounded by &---&
 			// each subarray is for a different operator
 			talltales['plus'] = [
+			    "&char&'s 家里有&numa&个苹果和&numb&个桃子。 &char&有几个水果?", //DM
 				"&char&'s garden has cherry tomatoes. One plant has &numa& and the other has &numb&. How many tomatoes is that altogether?", //DM
+				"上个星期, &char& 看见了许多小鸟. &char&看见了&numa&只红鸟&numb&黄鸟. &char&一共看见了几只小鸟?", //DM
 				"Last weekend, &char& heard birds outside. There were &numa& chirps Saturday and &numb& Sunday. How many chirps did &char& hear total?", //DM
 				"&char& loves taking pictures of insects: &numa& of a praying mantis, &numb& of a dragonfly, and &numc& of a beetle. How many pictures is that total?", //BL
+				"&char&有许多朋友。&char&有&numa&位大朋友，&numb&小朋友。&char&有多少朋友？",
 				"&char& has &numa& cousins on father side, and &numb& on mother side. How many cousins does &char& have in total?", //MY
 				"A container has &numa& apples and &numb& of oranges. How many total fruits are in the container?", //MY
+				"&char&看见&numa&头马和&numb&头羊， &char&看见了多少只动物？", //MY
 				"There are &numa& cows and &numb& dogs on a large farm. How many animals are on the farm?", //MY
 				"&char& has &numa& toys, &char&'s sister has &numb& more than &char&. How many toys does &char&'s sister have? How many toys does &char&'s sister and &char& have in total?",
 				"After eating &numa& pieces of candy, &char& had &numa& pieces left. How many pieces of candy did &char& have in the begining?",
@@ -37,6 +41,9 @@
 				"A homemade pizza needs to have &numa& black olives and &numb& green olives. How many olives does it require altogether?" //DM
 				];
 			talltales['minus'] = [
+				"学校有&numtot&个学生，其中&numa&是男学生，学校有多少女学生？",
+				"&char&有&numtot&本书， &char&给同学&numa&本书，&char&还剩下多少本书？",
+				"&char&有&numtot&图画书，&numa&本故事书。&char&的图画书比故事书多几本？",
 				"&char& has &numtot& crayons. A friend asked to borrow &numa& crayons. How many crayons does &char& have left?", //DM
 				"With &numtot& minutes left until bedtime, &char& spent &numa& minutes drawing a &obj&. How many minutes left until bedtime?", //DM
 				"&char& planted &numtotc& eggplant seeds, but &numa& never sprouted and &numb& of those eggplants died during a big frost. How many still grew?", //BL
@@ -55,6 +62,8 @@
 				"A fabric shop has &numtot& inches of ribbon. &numb& inches are cut off and sold. How many yards are left?" //DM
 				];
 			talltales['times'] = [
+				"桌上有&numb&个盘子，每个盘子里面有&numa&个苹果。桌上一共有几个苹果？",
+				"&char&每天学习&numb&分钟， &char&一个星期学习多少分钟？",
 				"&char& wants to bake &numa& cookies. Each cookie needs &numb& chocolate chips. How many chips total are needed?", //DM
 				"A box of pokemon cards contains &numa& packs, each pack contains &numb& cards. How many cards does 1 whole box contain?", //DM
 				"You have &numa& rabbits that eat 5 carrots each and &numb& baby rabbits that eat 3 carrot each. How many carrots will they eat total?", //DM

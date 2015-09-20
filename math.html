@@ -13,9 +13,11 @@
 			var $_GET = [],
           parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) { $_GET[key] = value; }),
           talltales = [],
+          randStories = [],
           namecalling,
           junkbox,
           randInt,
+		  randEntry,
           problemRand,
           coinFlip;
             // "&char&  &numtot& &numa&",
@@ -118,16 +120,53 @@
         'unicorn'
       ];
 
-			/**
-			 * Random Integer (randInt)
-			 * Returns a random number in a range given
-			 *
-			 * @param min integer
-			 * @param max integer
-			 * @return integer
-			 */
-		  randInt = function (min,max){
-        return min + (Math.floor(Math.random() * (max-min+1)));
+		/**
+		 * Random Integer (randInt)
+		 * Returns a random number in a range given
+		 *
+		 * @param min integer
+		 * @param max integer
+		 * @return integer
+		 */
+		function randomGenerator(low, high) {
+         if (arguments.length < 2) {
+            high = low;
+            low = 0;
+         }
+         this.low = low;
+         this.high = high;
+         this.reset();
+        }
+
+		randomGenerator.prototype = {
+		   reset: function() {
+			this.remaining = [];
+			for (var i = this.low; i <= this.high; i++) {
+				this.remaining.push(i);
+			}
+		   },
+		   get: function() {
+			if (!this.remaining.length) {
+				this.reset();
+			}
+			var index = Math.floor(Math.random() * this.remaining.length);
+			var val = this.remaining[index];
+			this.remaining.splice(index, 1);
+			return val;        
+		}
+		}
+		  randStories['plus'] = new randomGenerator(1, talltales['plus'].length);
+		  randStories['minus'] = new randomGenerator(1, talltales['minus'].length);
+		  randStories['times'] = new randomGenerator(1, talltales['times'].length);
+		  randStories['div'] = new randomGenerator(1, talltales['div'].length);	  
+
+		  randEntry = function (min,max){
+		     var r = new randomGenerator(min, max);
+			 return r.get();
+      };
+
+  		  randInt = function (min,max){
+             return min + (Math.floor(Math.random() * (max-min+1)));
       };
 
 			/**
@@ -342,7 +381,7 @@
 						sobj = junkbox[randInt(1,junkbox.length)-1];
 						// grab a random story based on the operator chosen
 						if (!talltales[op]) { op = "plus"; }
-						basestory = talltales[op][randInt(1,talltales[op].length)-1];
+						   basestory = talltales[op][randStories[op].get()-1];//basestory = talltales[op][randInt(1,talltales[op].length)-1];
 						// replace variables in the story string with actual data
 						datcontent = basestory.replace(/&char&/gi,schar).replace(/&numa&/gi,numa).replace(/&numb&/gi,numb).replace(/&numc&/gi,numc).replace(/&numtot&/gi,numtot).replace(/&numprod&/gi,numprod).replace(/&numtotc&/gi,numtotc).replace(/&numprodc&/gi,numprodc).replace(/&obj&/gi,sobj);
 						break;
